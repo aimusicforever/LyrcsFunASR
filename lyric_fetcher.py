@@ -14,6 +14,8 @@ import shutil
 import time
 from werkzeug.utils import secure_filename
 
+# uwsgi --ini start.ini
+# conda install uwsgi -c conda-forge  
 
 app = Flask(__name__)
 
@@ -25,8 +27,8 @@ model = AutoModel(
         punc_model="iic/punc_ct-transformer_zh-cn-common-vocab272727-pytorch"
     )
 
-@app.route('/fetch_lyric', methods=['GET', 'POST'])
-def fetch_lyric():
+@app.route('/fetch_lyrcs', methods=['GET', 'POST'])
+def fetch_lyrcs():
     
     file = request.files['file']
     
