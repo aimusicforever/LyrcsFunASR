@@ -27,6 +27,10 @@ model = AutoModel(
         punc_model="iic/punc_ct-transformer_zh-cn-common-vocab272727-pytorch"
     )
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return "hello fetch_lyrcs"
+
 @app.route('/fetch_lyrcs', methods=['GET', 'POST'])
 def fetch_lyrcs():
     
@@ -50,7 +54,23 @@ def fetch_lyrcs():
     savePath = os.path.join('./temp_file', secureName)
     file.save(savePath)
 
-# filepath = f"{model.model_path}/example/asr_example.wav"
+    # filepath = f"{model.model_path}/example/asr_example.wav"
+    return fetch_file_lyric_impl(savePath)
+    
+@app.route('/fetch_file_lyrcs', methods=['GET', 'POST'])
+def fetch_file_lyrcs():
+    path = request.args.get("path")
+    
+    if path is None:
+        return jsonify({'error': 'No file part'})
+    
+    
+    print("path:", path)
+    return fetch_file_lyric_impl(path)
+    
+    
+    
+def fetch_file_lyric_impl(savePath):
     res = model.generate(input=savePath,
                      sentence_timestamp=True, 
             batch_size_s=300)
