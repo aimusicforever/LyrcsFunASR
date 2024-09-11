@@ -14,7 +14,7 @@ import shutil
 import time
 from werkzeug.utils import secure_filename
 
-from funasr.utils.time_util import secendToHMS
+from funasr.utils.time_util import secendToHMS, secendToLyc
 
 # uwsgi --ini start.ini
 # conda install uwsgi -c conda-forge  
@@ -77,23 +77,28 @@ def fetch_file_lyric_impl(savePath, timeStapm=True):
                      sentence_timestamp=timeStapm, 
             batch_size_s=300)
     
+    # print(f"result:{res}")
+    
+    
+    
+    
     textLen = len(res[0]["text"])
     stampLen = len(res[0]["timestamp"])
     
     sentence_info = res[0]["sentence_info"]
-    
     
     lyrcs = []
     for item in sentence_info:
         info = {}
         
         info["text"] = item["text"]
-        info["start"] = secendToHMS(item["start"] / 1000)
-        info["end"] = secendToHMS(item["end"] / 1000)
+        info["start"] = "[" + secendToLyc(item["start"]) + "]"
+        info["end"] = "[" + secendToLyc(item["end"]) + "]"
+        info["end"] = "[" + secendToLyc(item["end"] ) + "]"
         
         lyrcs.append(info)
         
-    # print("res=====lyrcs:", lyrcs)
+    print("res=====lyrcs:", lyrcs)
 
     try:
         return lyrcs
