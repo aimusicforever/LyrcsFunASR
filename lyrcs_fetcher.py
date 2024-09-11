@@ -14,6 +14,8 @@ import shutil
 import time
 from werkzeug.utils import secure_filename
 
+from funasr.utils.time_util import secendToHMS
+
 # uwsgi --ini start.ini
 # conda install uwsgi -c conda-forge  
 
@@ -70,20 +72,45 @@ def fetch_file_lyrcs():
     
     
     
-def fetch_file_lyric_impl(savePath):
+def fetch_file_lyric_impl(savePath, timeStapm=True):
     res = model.generate(input=savePath,
-                     sentence_timestamp=True, 
+                     sentence_timestamp=timeStapm, 
             batch_size_s=300)
     
-    sentence_info = res[0]["sentence_info"]
-    print("res=====", res[0]["text"])
+    textLen = len(res[0]["text"])
+    stampLen = len(res[0]["timestamp"])
     
+    sentence_info = res[0]["sentence_info"]
+    
+    
+    lyrcs = []
+    for item in sentence_info:
+        info = {}
+        
+        info["text"] = item["text"]
+        info["start"] = secendToHMS(item["start"] / 1000)
+        info["end"] = secendToHMS(item["end"] / 1000)
+        
+        lyrcs.append(info)
+        
+    # print("res=====lyrcs:", lyrcs)
+
     try:
-        return sentence_info
+        return lyrcs
     except Exception as e:
-        return jsonify({"code": "异常", "message": "{}".format(e)})
+        return jsonify({"code": "异常", "message": "{}".format(e), "data":""})
     
 
 if __name__ == "__main__":
     app.run(port=50000, host='0.0.0.0')
+    
+    # time_local = time.localtime(13590/1000)
+
+    # dt = time.strftime("%H:%M:%S", time_local)
+    
+    # m, s = divmod(13590/1000, 60)
+    # h, m = divmod(m, 60)
+    # hms = "%02d:%02d:%02d" % (h, m, s)
+    # hms = secendToHMS(13590/1000)
+    # print("=====", hms)
 
