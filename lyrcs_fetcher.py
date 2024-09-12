@@ -31,10 +31,10 @@ model = AutoModel(
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return "hello fetch_lyrcs"
+    return "hello fetch_lyrics"
 
-@app.route('/fetch_lyrcs', methods=['GET', 'POST'])
-def fetch_lyrcs():
+@app.route('/fetch_lyrics', methods=['GET', 'POST'])
+def fetch_lyrics():
     
     file = request.files['file']
     
@@ -57,10 +57,10 @@ def fetch_lyrcs():
     file.save(savePath)
 
     # filepath = f"{model.model_path}/example/asr_example.wav"
-    return fetch_file_lyric_impl(savePath)
+    return fetch_file_lyrics_impl(savePath)
     
-@app.route('/fetch_file_lyrcs', methods=['GET', 'POST'])
-def fetch_file_lyrcs():
+@app.route('/fetch_file_lyrics', methods=['GET', 'POST'])
+def fetch_file_lyrics():
     path = request.args.get("path")
     
     if path is None:
@@ -68,11 +68,11 @@ def fetch_file_lyrcs():
     
     
     print("path:", path)
-    return fetch_file_lyric_impl(path)
+    return fetch_file_lyrics_impl(path)
     
     
     
-def fetch_file_lyric_impl(savePath, timeStapm=True):
+def fetch_file_lyrics_impl(savePath, timeStapm=True):
     res = model.generate(input=savePath,
                      sentence_timestamp=timeStapm, 
             batch_size_s=300)
